@@ -1,5 +1,12 @@
 # IS252.P11-DataMining
-IS252.P11
+
+# Các thành viên trong nhóm
+    1. Năng Tiến Thành - 22521348
+    2. Trần Thị Kiều Oanh - 22521062
+    3. Lê Nguyễn Diễm Quyên - 22521228
+    4. Hoàng Trịnh Anh Khoa - 22520668 
+
+# IS252.P11
 IS252.P11-DataMining/
 │
 ├── main.py                # File chính chạy ứng dụng Streamlit
