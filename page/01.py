@@ -4,278 +4,227 @@ from mlxtend.frequent_patterns import apriori, association_rules
 from mlxtend.preprocessing import TransactionEncoder
 
 # Cấu hình trang Streamlit
-st.set_page_config(page_title="My App", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Phân tích luật kết hợp", layout="wide", initial_sidebar_state="expanded")
 
-# Hiển thị thông báo hoặc mô tả
+# CSS Tùy chỉnh
 st.markdown("""
-    <style>
-        .stApp {
-            background: radial-gradient(circle at 30% 30%, rgba(0, 120, 160, 0.6), transparent 70%),
-                radial-gradient(circle at 70% 70%, rgba(214, 90, 0, 0.6), transparent 70%),
-                linear-gradient(to right, #000000, #1a1a1a);
-            background-size: cover;
-            background-attachment: fixed;
-            font-family: 'Inter', sans-serif;
-            color: white;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        header {
-            width: 1280px;
-            height: 101px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.52);
-            border-radius: 60px;
-            margin: 50px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
+<style>
+    /* Toàn bộ ứng dụng */
+    /* CSS Tùy chỉnh */
+.stApp {
+    background: radial-gradient(circle at 30% 30%, rgba(0, 120, 160, 0.6), transparent 70%),
+            radial-gradient(circle at 70% 70%, rgba(214, 90, 0, 0.6), transparent 70%),
+            linear-gradient(to right, #000000, #1a1a1a);
+    background-size: cover;
+    background-attachment: fixed;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    height: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
 
-        #icon {
-            all: unset;
-            width: 68px;
-            height: 68px;
-            color: white;
-            margin-left: 10px;
-            display: flex;
-            justify-content: left;
-            align-items: center;
-        }
+/* Khu vực tải file */
+.file-uploader {
+    color: white;
+    font-size: 30px;
+    width: 80%;
+    max-width: 500px;
+}
 
-        header h1 {
-            font-size: 36px;
-            font-weight: 800px;
-            text-align: center;
-            margin: 0;
-            color: white;
-        }
+/* Tiêu đề */
+.container {
+    width: 1280px; 
+    height: 101px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.52);
+    border-radius: 60px;
+    margin: 50px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+        
+.container h1 {
+    font-size: 40px;  /* Chỉnh cỡ chữ tiêu đề lớn hơn */
+    font-weight: 800px;
+    text-align: center;
+    margin: 0;
+    color: white;
+}
 
-        .input {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            margin: 0 70px 50px;
-        }
+/* Bảng dữ liệu */
+.dataframe {
+    width: 90%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    font-size: 18px;  /* Chỉnh kích thước chữ trong bảng lớn hơn */
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
 
-        .go {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 50px;
-        }
+.dataframe thead {
+    background-color: #FFB703;
+    color: white;
+    font-weight: bold;
+    font-size: 20px; /* Cỡ chữ tiêu đề bảng lớn hơn */
+}
 
-        label {
-            font-size: 28px;
-            font-weight: 500;
-            margin-right: 15px;
-        }
+.dataframe th, .dataframe td {
+    border: 1px solid #023047;
+    padding: 12px;
+    text-align: center;
+    font-size: 18px; /* Chỉnh kích thước chữ trong ô bảng */
+}
 
-        .file-input {
-            display: none;
-        }
+.dataframe tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
 
-        .add-file-button {
-            background: linear-gradient(to right, #FFB703, #CD9302, #996E02);
-            color: #023047;
-            width: 125px;
-            height: 100%;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 15px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500px;
-            font-size: 24px;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
+.dataframe tr:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
 
-        select {
-            background: #d9d9d9;
-            color: #023047;
-            height: 50px;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            text-align: left;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
+/* Các phần tử select và input */
+input[type="number"], select {
+    padding: 12px;
+    font-size: 18px; /* Chỉnh cỡ chữ trong select và input */
+    margin: 12px;
+    border-radius: 6px;
+    border: 1px solid #023047;
+    background-color: #FFFFFF;
+    color: #023047;
+    cursor: pointer;
+}
 
-        button {
-            background: linear-gradient(to right, #FFB703, #CD9302, #996E02);
-            color: #023047;
-            width: 313px;
-            height: 58px;
-            border: none;
-            padding: 10px 15px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            font-size: 24px;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
+/* Nút và các input */
+button {
+    background: linear-gradient(to right, #FFB703, #CD9302, #996E02);
+    color: #023047;
+    width: 313px; 
+    height: 58px;
+    border: none;
+    padding: 10px 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
 
-        button:hover {
-            background: linear-gradient(to right, #CD9302, #996E02);
-        }
+button:hover {
+    background: linear-gradient(to right, #CD9302, #996E02);
+}
+        
+/* Kết quả phần tử */
+.result-container {
+    background-color: #996E02;
+    color: white;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    font-size: 20px; /* Cỡ chữ trong kết quả lớn hơn */
+    font-weight: bold;
+}
+</style>
+""", unsafe_allow_html=True)
 
-        footer {
-            width: 1280px;
-            height: 600px;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: #d9d9d9 0.2;
-            border-radius: 40px;
-            border: 1px solid #fbfbfb;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+# Header với CSS container
+st.markdown("""
+<div class="container">
+    <h1>Tập phổ biến và luật kết hợp</h1>
+</div>
+""", unsafe_allow_html=True)
 
-        footer p {
-            margin-top: 2px;
-            margin-left: 5px;
-            font-size: 32px;
-            font-weight: 500;
-            font-family: 'Inter', sans-serif;
-        }
-            
-        .stDataFrame tbody td {
-            background-color: #f5f5f5;
-            text-align: center;  /* Căn giữa */
-            font-weight: bold;   /* Đậm tiêu đề */
-            color: black;        /* Màu chữ */
-        }
+# Khu vực tải file
+st.markdown("<div class='file-uploader'><strong>1. Chọn tệp tin:</strong></div>", unsafe_allow_html=True)
+file = st.file_uploader("Chọn tệp dữ liệu (CSV hoặc XLSX)", type=['csv', 'xlsx'])
 
-        .stDataFrame thead th {
-            background-color: #2D9CDB;  /* Màu nền tiêu đề bảng */
-            color: white;               /* Màu chữ tiêu đề */
-            text-align: center;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-
-# Giao diện nhập liệu
-st.markdown("<header><h1>Tập phổ biến và luật kết hợp</h1></header>", unsafe_allow_html=True)
-
-# Input file và thuật toán chọn
-st.markdown('<div class="input">', unsafe_allow_html=True)
-st.markdown("<label>Nhập file:</label>", unsafe_allow_html=True)
-file = st.file_uploader("Chọn tệp tin", type=['csv', 'xlsx'])
-st.markdown("<label>Chọn thuật toán:</label>", unsafe_allow_html=True)
-
-# Dropdown cho thuật toán
-dropdown_html = """
-<select id="dropdown-menu">
-    <option value="" disabled selected></option>
-    <option value="frequent_itemsets">Tìm tập phổ biến và luật kết hợp</option>
-    <option value="maximal_itemsets">Tìm tập phổ biến tối đại</option>
-    <option value="association_rules">Độ tin cậy của luật kết hợp</option>
-</select>
-"""
-st.markdown(dropdown_html, unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
-
-# Giao diện nhập liệu: Hiển thị label cho minsupp
-st.markdown("<label>Nhập minsupp (Sự hỗ trợ tối thiểu)</label>", unsafe_allow_html=True)
-
-# Nhập giá trị minsupp (sự hỗ trợ tối thiểu), không sử dụng label trong st.number_input
-minsupp = st.number_input(
-    label="Nhập minsupp (Sự hỗ trợ tối thiểu)",
-    min_value=0.0,  # Giá trị nhỏ nhất
-    max_value=1.0,  # Giá trị lớn nhất
-    value=0.1,      # Giá trị mặc định
-    step=0.01       # Bước nhảy giữa các giá trị
-)
-
-mincoff = st.number_input(
-    label="Nhập mincoff (Độ tin cậy tối thiểu)",
-    min_value=0.0,
-    max_value=1.0,
-    value=0.5,
-    step=0.01
-)
-
-def find_maximal_frequent_itemsets(frequent_itemsets):
-    """
-    Hàm tìm các tập phổ biến tối đại từ các tập phổ biến.
-    """
-    maximal_itemsets = []
-    for index, itemset in frequent_itemsets.iterrows():
-        is_maximal = True
-        for sub_index, sub_itemset in frequent_itemsets.iterrows():
-            if itemset['itemsets'].issubset(sub_itemset['itemsets']) and itemset['support'] == sub_itemset['support']:
-                is_maximal = False
-                break
-        if is_maximal:
-            maximal_itemsets.append(itemset)
-    return pd.DataFrame(maximal_itemsets)
-
+# Nếu có file được tải lên
 if file is not None:
     try:
-        # Bước 2: Đọc tệp và chuyển thành DataFrame
+        # Đọc file
         if file.name.endswith('.csv'):
             df = pd.read_csv(file)
         elif file.name.endswith('.xlsx'):
             df = pd.read_excel(file)
+
+        # Kiểm tra dữ liệu
+        if "Ma_hoa_don" not in df.columns or "Ma_hang" not in df.columns:
+            st.markdown("<p class='error'>Tệp tin cần có các cột: 'Ma_hoa_don' và 'Ma_hang'.</p>", unsafe_allow_html=True)
         else:
-            st.error("Chỉ hỗ trợ tệp CSV và XLSX.")
+            st.write("**Dữ liệu đã tải lên:**")
+            # Sử dụng markdown để hiển thị bảng với lớp CSS đã chỉnh sửa
+            st.markdown(f"<table class='dataframe'>{df.to_html(index=False)}</table>", unsafe_allow_html=True)
 
-        # Bước 3: Chuyển DataFrame thành bảng HTML
-        df_html = df.to_html(classes="table table-striped table-bordered", index=False)
+            # Chọn thuật toán
+            st.markdown("### 2. Chọn thuật toán phân tích:")
+            option = st.selectbox(
+                "Chọn thuật toán bạn muốn thực hiện:",
+                options=["", "Tìm tập phổ biến", "Tìm tập phổ biến tối đại", "Phân tích luật kết hợp"]
+            )
 
-        # Bước 4: Hiển thị bảng HTML trong Streamlit
-        st.markdown("""
-            <style>
-                .table {
-                    width: 100%;
-                    height: 400px;
-                    overflow-y: scroll;
-                    border-collapse: collapse;
-                }
-                .table thead th {
-                    background-color: #4285f4;
-                    color: white;
-                    padding: 10px;
-                    text-align: center;
-                }
-                .table tbody td {
-                    padding: 10px;
-                    text-align: center;
-                    border-bottom: 1px solid #ddd;
-                }
-            </style>
-            """, unsafe_allow_html=True)
-        st.markdown(df_html, unsafe_allow_html=True)
-        # Chuyển đổi dữ liệu
-    itemsets = df.groupby('Ma_hoa_don')['Ma_hang'].apply(set).reset_index(name='itemsets')
+            # Các tham số đầu vào
+            if option in ["Tìm tập phổ biến", "Tìm tập phổ biến tối đại"]:
+                minsupp = st.number_input(
+                    "Nhập giá trị minsupp (0.01 - 1.0):",
+                    min_value=0.01, max_value=1.0, value=0.1, step=0.01
+                )
+            elif option == "Phân tích luật kết hợp":
+                minsupp = st.number_input(
+                    "Nhập giá trị minsupp (0.01 - 1.0):",
+                    min_value=0.01, max_value=1.0, value=0.1, step=0.01
+                )
+                mincoff = st.number_input(
+                    "Nhập giá trị mincoff (0.01 - 1.0):",
+                    min_value=0.01, max_value=1.0, value=0.5, step=0.01
+                )
 
-    # Hiển thị kết quả thuật toán
-    if dropdown_html == "apriori":
-        te = TransactionEncoder()
-        te_ary = te.fit(itemsets['itemsets']).transform(itemsets['itemsets'])
-        df_ary = pd.DataFrame(te_ary, columns=te.columns_)
+            # Nút chạy thuật toán
+            if st.button("Chạy thuật toán"):
+                # Tiền xử lý dữ liệu
+                transactions = df.groupby('Ma_hoa_don')['Ma_hang'].apply(list).tolist()
+                te = TransactionEncoder()
+                te_ary = te.fit(transactions).transform(transactions)
+                df_encoded = pd.DataFrame(te_ary, columns=te.columns_)
 
-        # Áp dụng Apriori
-        frequent_itemsets = apriori(df_ary, min_support=min_support, use_colnames=True)
-        st.write(frequent_itemsets)
-        
-    elif dropdown_html == "maximal":
-        st.write("Maximal Itemsets chưa được cài đặt")
-        
-    elif dropdown_html == "rules":
-        frequent_itemsets = apriori(df_ary, min_support=min_support, use_colnames=True)
-        rules = association_rules(frequent_itemsets, metric="lift", min_threshold=min_threshold)
-        st.write(rules)
+                # Thực thi thuật toán
+                if option == "Tìm tập phổ biến":
+                    frequent_itemsets = apriori(df_encoded, min_support=minsupp, use_colnames=True)
+                    st.markdown("<div class='result-container'><strong>Kết quả: Tập phổ biến</strong></div>", unsafe_allow_html=True)
+                    st.markdown(f"<table class='dataframe'>{frequent_itemsets.to_html(index=False)}</table>", unsafe_allow_html=True)
+
+                elif option == "Tìm tập phổ biến tối đại":
+                    frequent_itemsets = apriori(df_encoded, min_support=minsupp, use_colnames=True)
+
+                    # Tìm các tập phổ biến tối đại
+                    max_itemsets = []
+                    for idx, itemset in frequent_itemsets.iterrows():
+                        itemset_list = list(itemset['itemsets'])
+                        is_maximal = True
+                        for sub_idx, sub_itemset in frequent_itemsets.iterrows():
+                            # Kiểm tra nếu tập con lớn hơn tập hiện tại và cũng là tập phổ biến
+                            if len(itemset_list) < len(sub_itemset['itemsets']) and set(itemset_list).issubset(sub_itemset['itemsets']):
+                                is_maximal = False
+                                break
+                        if is_maximal:
+                            max_itemsets.append(itemset)
+
+                    max_itemsets_df = pd.DataFrame(max_itemsets)
+                    st.markdown("<div class='result-container'><strong>Kết quả: Tập phổ biến tối đại</strong></div>", unsafe_allow_html=True)
+                    st.markdown(f"<table class='dataframe'>{max_itemsets_df.to_html(index=False)}</table>", unsafe_allow_html=True)
+
+                elif option == "Phân tích luật kết hợp":
+                    frequent_itemsets = apriori(df_encoded, min_support=minsupp, use_colnames=True)
+                    rules = association_rules(frequent_itemsets, metric="lift", min_threshold=mincoff)
+                    st.markdown("<div class='result-container'><strong>Kết quả: Luật kết hợp</strong></div>", unsafe_allow_html=True)
+                    st.markdown(f"<table class='dataframe'>{rules.to_html(index=False)}</table>", unsafe_allow_html=True)
     except Exception as e:
-        st.error(f"Đã xảy ra lỗi: {e}")
+        st.error(f"Đã có lỗi xảy ra: {e}")
