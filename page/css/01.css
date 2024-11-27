@@ -1,0 +1,138 @@
+body {
+    background: radial-gradient(circle at 30% 30%, rgba(0, 120, 160, 0.6), transparent 70%),
+                radial-gradient(circle at 70% 70%, rgba(214, 90, 0, 0.6), transparent 70%),
+                linear-gradient(to right, #000000, #1a1a1a);
+    background-size: cover;
+    background-attachment: fixed;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    height: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+}  
+
+header {
+    width: 1280px; 
+    height: 101px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.52);
+    border-radius: 60px;
+    margin: 50px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#icon {
+    all: unset;
+    width: 68px; 
+    height: 68px;
+    color: white;
+    margin-left: 10px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 36px;
+    font-weight: 800px;
+    text-align: center;
+    margin: 0;
+    color: white;
+}
+
+.input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 70px 50px;
+}
+
+.go {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+label {
+    font-size: 28px;
+    font-weight: 500;
+    margin-right: 15px;
+}
+
+.file-input {
+    display:none;
+}
+
+.add-file-button {
+    background: linear-gradient(to right, #FFB703, #CD9302, #996E02);
+    color: #023047;
+    width: 125px; 
+    height: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500px;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+select {
+    background: #d9d9d9;
+    color: #023047;
+    height: 50px;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: left;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+button {
+    background: linear-gradient(to right, #FFB703, #CD9302, #996E02);
+    color: #023047;
+    width: 313px; 
+    height: 58px;
+    border: none;
+    padding: 10px 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+button:hover {
+    background: linear-gradient(to right, #CD9302, #996E02);
+}
+
+footer {
+    width: 1280px;
+    height: 600px; 
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #d9d9d9 0.2;
+    border-radius: 40px;
+    border: 1px solid #fbfbfb;
+}
+
+footer p {
+    margin-top: 2px;
+    margin-left: 5px;
+    font-size: 32px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+}
