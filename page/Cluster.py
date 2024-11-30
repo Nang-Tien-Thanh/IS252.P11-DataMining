@@ -71,7 +71,6 @@ uploaded_file = st.file_uploader("Tải file dữ liệu (CSV):", type=["csv"])
 if uploaded_file:
     data = pd.read_csv(uploaded_file, sep=';')
     import pandas as pd
-import streamlit as st
 
 # Giả sử bạn đã tải dữ liệu vào biến `data`
 # data = pd.read_csv('path_to_your_file.csv')  # Ví dụ tải dữ liệu từ file CSV
@@ -133,7 +132,8 @@ data_html = data.to_html(
 
 # Hiển thị CSS và bảng HTML
 st.markdown(custom_data_table_css, unsafe_allow_html=True)
-st.markdown(f'<div class="data-table-container">{data_html}</div>', unsafe_allow_html=True)
+st.markdown(
+    f'<div class="data-table-container">{data_html}</div>', unsafe_allow_html=True)
 
 
 # Chọn thuật toán
@@ -141,7 +141,8 @@ algorithm = st.selectbox("Chọn thuật toán:", ["K-means", "Kohonen"])
 
 # Hiển thị kết quả K-means
 if algorithm == "K-means":
-    num_clusters = st.number_input("Số cụm (k):", min_value=1, max_value=20, step=1, value=3)
+    num_clusters = st.number_input(
+        "Số cụm (k):", min_value=1, max_value=20, step=1, value=3)
     if st.button("Thực hiện K-means", key="kmeans"):
         # Thực hiện K-means
         kmeans = KMeans(n_clusters=num_clusters, random_state=0)
@@ -152,7 +153,8 @@ if algorithm == "K-means":
         data['Gom cụm'] = kmeans.labels_  # Thêm nhãn cụm vào dữ liệu
 
         # Hiển thị tiêu đề
-        st.markdown('<h2 style="margin-bottom: -40px;">Kết quả K-means:</h2>', unsafe_allow_html=True)
+        st.markdown(
+            '<h2 style="margin-bottom: -40px;">Kết quả K-means:</h2>', unsafe_allow_html=True)
 
         # CSS tùy chỉnh cho bảng K-means
         custom_table_css = """
@@ -212,8 +214,8 @@ if algorithm == "K-means":
 
         # Hiển thị bảng kết quả với CSS
         st.markdown(custom_table_css, unsafe_allow_html=True)
-        st.markdown(f'<div class="kmeans-table-container">{data_html}</div>', unsafe_allow_html=True)
-
+        st.markdown(
+            f'<div class="kmeans-table-container">{data_html}</div>', unsafe_allow_html=True)
 
         # Hiển thị Vector trọng tâm dưới dạng bảng
         st.markdown('<h2>Vector trọng tâm:</h2>', unsafe_allow_html=True)
@@ -222,8 +224,10 @@ if algorithm == "K-means":
         centroids = kmeans.cluster_centers_  # Vector trọng tâm
 
         # Đổi tên cột cho phù hợp với yêu cầu
-        centroids_df = pd.DataFrame(centroids, columns=["x", "y"])  # Giả sử dữ liệu có 2 chiều (x, y)
-        centroids_df.insert(0, 'Trọng tâm các cụm', [f'Cụm {i+1}' for i in range(len(centroids_df))])
+        # Giả sử dữ liệu có 2 chiều (x, y)
+        centroids_df = pd.DataFrame(centroids, columns=["x", "y"])
+        centroids_df.insert(0, 'Trọng tâm các cụm', [
+                            f'Cụm {i+1}' for i in range(len(centroids_df))])
 
         # CSS tùy chỉnh cho bảng Vector trọng tâm
         custom_centroid_table_css = """
@@ -282,13 +286,14 @@ if algorithm == "K-means":
 
         # Hiển thị CSS và bảng HTML
         st.markdown(custom_centroid_table_css, unsafe_allow_html=True)
-        st.markdown(f'<div class="centroid-table-container">{centroid_table_html}</div>', unsafe_allow_html=True)
-
+        st.markdown(f'<div class="centroid-table-container">{
+                    centroid_table_html}</div>', unsafe_allow_html=True)
 
         # Hiển thị biểu đồ K-means
         st.markdown('<h2>Biểu đồ K-means:</h2>', unsafe_allow_html=True)
         plt.figure(figsize=(8, 6))
-        plt.scatter(data.iloc[:, 0], data.iloc[:, 1], c=kmeans.labels_, cmap='viridis')
+        plt.scatter(data.iloc[:, 0], data.iloc[:, 1],
+                    c=kmeans.labels_, cmap='viridis')
         plt.title("K-means Clustering")
         plt.xlabel(data.columns[0])
         plt.ylabel(data.columns[1])
@@ -296,28 +301,38 @@ if algorithm == "K-means":
         st.pyplot(plt)
 
 elif algorithm == "Kohonen":
-    map_width = st.number_input("Chiều rộng bản đồ (Width):", min_value=1, step=1, value=5)
-    map_height = st.number_input("Chiều cao bản đồ (Height):", min_value=1, step=1, value=5)
-    num_epochs = st.number_input("Số lần lặp (Epochs):", min_value=1, step=1, value=100)
-    alpha = st.number_input("Tốc độ học (Alpha):", min_value=0.01, max_value=1.0, step=0.01, value=0.5)
-    neighborhood_radius = st.number_input("Bán kính vùng lân cận:", min_value=1, step=1, value=2)
+    map_width = st.number_input(
+        "Chiều rộng bản đồ (Width):", min_value=1, step=1, value=5)
+    map_height = st.number_input(
+        "Chiều cao bản đồ (Height):", min_value=1, step=1, value=5)
+    num_epochs = st.number_input(
+        "Số lần lặp (Epochs):", min_value=1, step=1, value=100)
+    alpha = st.number_input("Tốc độ học (Alpha):",
+                            min_value=0.01, max_value=1.0, step=0.01, value=0.5)
+    neighborhood_radius = st.number_input(
+        "Bán kính vùng lân cận:", min_value=1, step=1, value=2)
 
     if st.button("Thực hiện Kohonen", key="kohonen"):
         # Chuẩn bị dữ liệu
         data_values = data.values
-        data_values = (data_values - np.mean(data_values, axis=0)) / np.std(data_values, axis=0)
+        data_values = (data_values - np.mean(data_values, axis=0)
+                       ) / np.std(data_values, axis=0)
 
         # Huấn luyện Kohonen SOM
-        som = MiniSom(map_width, map_height, data_values.shape[1], sigma=neighborhood_radius, learning_rate=alpha)
+        som = MiniSom(map_width, map_height,
+                      data_values.shape[1], sigma=neighborhood_radius, learning_rate=alpha)
         som.random_weights_init(data_values)
         som.train_random(data_values, num_epochs)
 
         # Gắn cụm
-        labels = [som.winner(x) for x in data_values]  # each label is a tuple (x, y) coordinate
-        data["Gom cụm"] = [f"{x[0]}-{x[1]}" for x in labels]  # Creating a string key for clusters
+        # each label is a tuple (x, y) coordinate
+        labels = [som.winner(x) for x in data_values]
+        # Creating a string key for clusters
+        data["Gom cụm"] = [f"{x[0]}-{x[1]}" for x in labels]
 
         # Hiển thị kết quả Kohonen dưới dạng bảng
-        st.markdown('<h2 style="margin-bottom: -40px;">Kết quả Kohonen:</h2>', unsafe_allow_html=True)
+        st.markdown(
+            '<h2 style="margin-bottom: -40px;">Kết quả Kohonen:</h2>', unsafe_allow_html=True)
 
         # Chuyển đổi dữ liệu thành HTML bảng với CSS tùy chỉnh
         custom_table_css = """
@@ -377,8 +392,8 @@ elif algorithm == "Kohonen":
 
         # Hiển thị bảng kết quả với CSS
         st.markdown(custom_table_css, unsafe_allow_html=True)
-        st.markdown(f'<div class="kohonen-table-container">{data_html}</div>', unsafe_allow_html=True)
-
+        st.markdown(
+            f'<div class="kohonen-table-container">{data_html}</div>', unsafe_allow_html=True)
 
         # Hiển thị Trọng số các nút dưới dạng bảng
         st.markdown('<h2>Trọng số các nút:</h2>', unsafe_allow_html=True)
@@ -396,7 +411,7 @@ elif algorithm == "Kohonen":
 
         # Tạo HTML cho bảng
         table_html = weights_df.to_html(
-            index=True, 
+            index=True,
             classes='styled-table',  # Thêm class để áp dụng CSS
             border=0  # Bỏ viền mặc định của bảng
         )
@@ -460,9 +475,8 @@ elif algorithm == "Kohonen":
 
         # Hiển thị CSS và bảng HTML trong div có kích thước cụ thể
         st.markdown(custom_css, unsafe_allow_html=True)
-        st.markdown(f'<div class="styled-table-container">{table_html}</div>', unsafe_allow_html=True)
-
-
+        st.markdown(
+            f'<div class="styled-table-container">{table_html}</div>', unsafe_allow_html=True)
 
         # Hiển thị nhận xét
         st.markdown("<h3>Chú thích:</h3>", unsafe_allow_html=True)
@@ -473,22 +487,24 @@ elif algorithm == "Kohonen":
         - Các nút gần nhau trên bản đồ Kohonen thường có giá trị trọng số tương tự, phản ánh dữ liệu trong các cụm liên quan.
         """)
 
-
         # Hiển thị biểu đồ Kohonen SOM
         st.markdown('<h2>Biểu đồ Kohonen SOM:</h2>', unsafe_allow_html=True)
         plt.figure(figsize=(8, 6))
 
         # Flatten the coordinates of the labels
-        x_vals = [label[0] for label in labels]  # x-coordinate from (x, y) tuples
-        y_vals = [label[1] for label in labels]  # y-coordinate from (x, y) tuples
+        # x-coordinate from (x, y) tuples
+        x_vals = [label[0] for label in labels]
+        # y-coordinate from (x, y) tuples
+        y_vals = [label[1] for label in labels]
 
         # Color map based on clusters
-        cluster_labels = [som.winner(x)[0] * som.get_weights().shape[1] + som.winner(x)[1] for x in data_values]  # flatten cluster index
-        plt.scatter(x_vals, y_vals, c=cluster_labels, cmap='viridis', marker='o')
+        cluster_labels = [som.winner(x)[0] * som.get_weights().shape[1] + som.winner(x)[
+            1] for x in data_values]  # flatten cluster index
+        plt.scatter(x_vals, y_vals, c=cluster_labels,
+                    cmap='viridis', marker='o')
 
         plt.title("Kohonen SOM Clustering")
         plt.xlabel("X")
         plt.ylabel("Y")
         plt.colorbar(label='Cluster')
         st.pyplot(plt)
-
