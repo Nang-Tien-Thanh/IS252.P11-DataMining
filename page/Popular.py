@@ -4,7 +4,8 @@ from mlxtend.frequent_patterns import apriori, association_rules
 from mlxtend.preprocessing import TransactionEncoder
 
 # Cấu hình trang Streamlit
-st.set_page_config(page_title="Phân tích luật kết hợp", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Phân tích luật kết hợp",
+                   layout="wide", initial_sidebar_state="expanded")
 
 # CSS Tùy chỉnh
 st.markdown("""
@@ -144,8 +145,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Khu vực tải file
-st.markdown("<div class='file-uploader'><strong>1. Chọn tệp tin:</strong></div>", unsafe_allow_html=True)
-file = st.file_uploader("Chọn tệp dữ liệu (CSV hoặc XLSX)", type=['csv', 'xlsx'])
+st.markdown("<div class='file-uploader'><strong>1. Chọn tệp tin:</strong></div>",
+            unsafe_allow_html=True)
+file = st.file_uploader(
+    "Chọn tệp dữ liệu (CSV hoặc XLSX)", type=['csv', 'xlsx'])
 
 # Nếu có file được tải lên
 if file is not None:
@@ -158,17 +161,20 @@ if file is not None:
 
         # Kiểm tra dữ liệu
         if "Ma_hoa_don" not in df.columns or "Ma_hang" not in df.columns:
-            st.markdown("<p class='error'>Tệp tin cần có các cột: 'Ma_hoa_don' và 'Ma_hang'.</p>", unsafe_allow_html=True)
+            st.markdown(
+                "<p class='error'>Tệp tin cần có các cột: 'Ma_hoa_don' và 'Ma_hang'.</p>", unsafe_allow_html=True)
         else:
             st.write("**Dữ liệu đã tải lên:**")
             # Sử dụng markdown để hiển thị bảng với lớp CSS đã chỉnh sửa
-            st.markdown(f"<table class='dataframe'>{df.to_html(index=False)}</table>", unsafe_allow_html=True)
+            st.markdown(f"<table class='dataframe'>{df.to_html(
+                index=False)}</table>", unsafe_allow_html=True)
 
             # Chọn thuật toán
             st.markdown("### 2. Chọn thuật toán phân tích:")
             option = st.selectbox(
                 "Chọn thuật toán bạn muốn thực hiện:",
-                options=["", "Tìm tập phổ biến", "Tìm tập phổ biến tối đại", "Phân tích luật kết hợp"]
+                options=["", "Tìm tập phổ biến",
+                         "Tìm tập phổ biến tối đại", "Phân tích luật kết hợp"]
             )
 
             # Các tham số đầu vào
@@ -190,19 +196,24 @@ if file is not None:
             # Nút chạy thuật toán
             if st.button("Chạy thuật toán"):
                 # Tiền xử lý dữ liệu
-                transactions = df.groupby('Ma_hoa_don')['Ma_hang'].apply(list).tolist()
+                transactions = df.groupby('Ma_hoa_don')[
+                    'Ma_hang'].apply(list).tolist()
                 te = TransactionEncoder()
                 te_ary = te.fit(transactions).transform(transactions)
                 df_encoded = pd.DataFrame(te_ary, columns=te.columns_)
 
                 # Thực thi thuật toán
                 if option == "Tìm tập phổ biến":
-                    frequent_itemsets = apriori(df_encoded, min_support=minsupp, use_colnames=True)
-                    st.markdown("<div class='result-container'><strong>Kết quả: Tập phổ biến</strong></div>", unsafe_allow_html=True)
-                    st.markdown(f"<table class='dataframe'>{frequent_itemsets.to_html(index=False)}</table>", unsafe_allow_html=True)
+                    frequent_itemsets = apriori(
+                        df_encoded, min_support=minsupp, use_colnames=True)
+                    st.markdown(
+                        "<div class='result-container'><strong>Kết quả: Tập phổ biến</strong></div>", unsafe_allow_html=True)
+                    st.markdown(f"<table class='dataframe'>{frequent_itemsets.to_html(
+                        index=False)}</table>", unsafe_allow_html=True)
 
                 elif option == "Tìm tập phổ biến tối đại":
-                    frequent_itemsets = apriori(df_encoded, min_support=minsupp, use_colnames=True)
+                    frequent_itemsets = apriori(
+                        df_encoded, min_support=minsupp, use_colnames=True)
 
                     # Tìm các tập phổ biến tối đại
                     max_itemsets = []
@@ -218,13 +229,19 @@ if file is not None:
                             max_itemsets.append(itemset)
 
                     max_itemsets_df = pd.DataFrame(max_itemsets)
-                    st.markdown("<div class='result-container'><strong>Kết quả: Tập phổ biến tối đại</strong></div>", unsafe_allow_html=True)
-                    st.markdown(f"<table class='dataframe'>{max_itemsets_df.to_html(index=False)}</table>", unsafe_allow_html=True)
+                    st.markdown(
+                        "<div class='result-container'><strong>Kết quả: Tập phổ biến tối đại</strong></div>", unsafe_allow_html=True)
+                    st.markdown(f"<table class='dataframe'>{max_itemsets_df.to_html(
+                        index=False)}</table>", unsafe_allow_html=True)
 
                 elif option == "Phân tích luật kết hợp":
-                    frequent_itemsets = apriori(df_encoded, min_support=minsupp, use_colnames=True)
-                    rules = association_rules(frequent_itemsets, metric="lift", min_threshold=mincoff)
-                    st.markdown("<div class='result-container'><strong>Kết quả: Luật kết hợp</strong></div>", unsafe_allow_html=True)
-                    st.markdown(f"<table class='dataframe'>{rules.to_html(index=False)}</table>", unsafe_allow_html=True)
+                    frequent_itemsets = apriori(
+                        df_encoded, min_support=minsupp, use_colnames=True)
+                    rules = association_rules(
+                        frequent_itemsets, metric="lift", min_threshold=mincoff)
+                    st.markdown(
+                        "<div class='result-container'><strong>Kết quả: Luật kết hợp</strong></div>", unsafe_allow_html=True)
+                    st.markdown(f"<table class='dataframe'>{rules.to_html(
+                        index=False)}</table>", unsafe_allow_html=True)
     except Exception as e:
         st.error(f"Đã có lỗi xảy ra: {e}")
