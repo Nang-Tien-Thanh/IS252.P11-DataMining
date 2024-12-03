@@ -41,12 +41,13 @@ def app():
 
     /* Tiêu đề */
     .container {
-        width: 1280px; 
+        width: 704px; 
         height: 101px;
         background-color: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.52);
         border-radius: 60px;
         margin: 50px auto;
+        margin-top: 200px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -107,7 +108,7 @@ def app():
     }
 
     /* Nút và các input */
-    button {
+    /*button {
         background: linear-gradient(to right, #FFB703, #CD9302, #996E02);
         color: #023047;
         width: 313px; 
@@ -120,7 +121,24 @@ def app():
         cursor: pointer;
         text-align: center;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    }
+    }*/
+    
+    button {
+                justify-content: center;
+                align-items: center;
+                padding: 9px 42px;
+                font-size: 20px;
+                font-weight: bold;
+                color: #023047;  /* Màu chữ */
+                text-align: center;
+                width: 200px;
+                background: linear-gradient(180deg, #219EBC 0%, #FFB703 100%); /* Nền gradient */
+                border-radius: 10px;
+                border: none; /* Bỏ viền */
+                cursor: pointer; /* Thêm con trỏ chuột kiểu pointer */
+                transition: background 0.3s ease; /* Hiệu ứng chuyển màu nền khi hover */
+                font-size: 16px;
+            }
 
     button:hover {
         background: linear-gradient(to right, #CD9302, #996E02);

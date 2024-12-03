@@ -92,7 +92,7 @@ st.markdown(
                     border: 1px solid rgba(255, 255, 255, 0.52);
                     padding: 10px; /* Thêm khoảng cách */
                     border-radius: 60px; /* Bo góc */
-                    margin-bottom: 20px;
+                    margin-bottom: 40px;
                     
                 }
                 
