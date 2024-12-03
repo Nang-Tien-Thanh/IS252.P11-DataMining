@@ -3,6 +3,7 @@ import streamlit as st
 from page import Classification
 from page import Cluster
 from page import Popular
+from page import Reduct
 
 # Định dạng nền
 st.markdown(
@@ -62,10 +63,10 @@ st.markdown(
     <body style="background-color: #000000; justify-content: center; /* Căn ngang */
         align-items: center;    /* Căn dọc */">
         <div class="body">
-           
 
-            
-            </div>       
+
+
+            </div>
 
         </div>
 
@@ -78,10 +79,10 @@ st.markdown(
 )
 
 st.markdown(
-    """ 
+    """
         <style>
            .header {
-                    margin-top: 250px; 
+                    margin-top: 250px;
                     display: flex;
                     justify-content: center; /* Căn giữa nội dung theo chiều ngang */
                     align-items: center;    /* Căn giữa nội dung theo chiều dọc */
@@ -93,16 +94,16 @@ st.markdown(
                     padding: 10px; /* Thêm khoảng cách */
                     border-radius: 60px; /* Bo góc */
                     margin-bottom: 40px;
-                    
+
                 }
-                
+
         </style>
          </head>
         <div class="header">
             <iconify-icon class="icon" icon="fluent:library-24-filled"></iconify-icon></a>
             IS252.P11 - Datamining
         </div>
-        
+
         """, unsafe_allow_html=True
 
 )
@@ -122,3 +123,5 @@ elif option == "Gom cụm":
     Cluster.app()  # Gọi hàm app trong Gomcum.py
 elif option == "Tập phổ biến và luật kết hợp":
     Popular.app()  # Gọi hàm app trong T.py
+elif option == "Tập thô":
+    Reduct.app()
