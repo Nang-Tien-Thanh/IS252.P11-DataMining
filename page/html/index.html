@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File and Choose Algorithm</title>
+</head>
+<body>
+    <h1>Upload File and Process</h1>
+    <form action="/process" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="file">Upload File:</label>
+            <input type="file" id="file" name="file" required>
+        </div>
+        <div>
+            <label for="algorithm">Choose Algorithm:</label>
+            <select id="algorithm" name="algorithm">
+                <option value="algorithm1">Algorithm 1</option>
+                <option value="algorithm2">Algorithm 2</option>
+                <option value="algorithm3">Algorithm 3</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Execute</button>
+        </div>
+    </form>
+    <footer id="file-info"></footer>
+    <script>
+        const fileInput = document.getElementById('file');
+        const footer = document.getElementById('file-info');
+
+        fileInput.addEventListener('change', function() {
+            const fileName = fileInput.files[0]?.name || "No file selected";
+            footer.textContent = `Selected File: ${fileName}`;
+        });
+    </script>
+</body>
+</html>
