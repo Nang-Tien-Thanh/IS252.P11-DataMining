@@ -144,7 +144,17 @@ def app():
 
     if uploaded_file is not None:
         # Đọc dữ liệu từ file Excel
-        df = pd.read_excel(uploaded_file)
+        try:
+            df = pd.read_excel(uploaded_file)
+
+            # Hiển thị bảng dữ liệu trên giao diện
+            st.write("### Dữ liệu đã tải lên:")
+            st.dataframe(df, use_container_width=True)
+            
+            # Thông báo số dòng và số cột
+            st.write(f"Dữ liệu có {df.shape[0]} dòng và {df.shape[1]} cột.")
+        except Exception as e:
+            st.error(f"Lỗi khi đọc file: {e}")
 
         # Mapping dữ liệu định tính sang số
         mapping = {
