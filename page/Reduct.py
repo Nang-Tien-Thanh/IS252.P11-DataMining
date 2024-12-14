@@ -27,7 +27,7 @@ def app():
             background-size: cover;  /* Phóng to ảnh để bao phủ màn hình */
             background-repeat: no-repeat;
             background-position: center center;
-            # background-attachment: fixed; /* Cố định nền khi cuộn */
+            
             }
                 
                 /* Chỉnh hình nền cho toàn màn hình */
@@ -150,7 +150,7 @@ def app():
             # Hiển thị bảng dữ liệu trên giao diện
             st.write("### Dữ liệu đã tải lên:")
             st.dataframe(df, use_container_width=True)
-            
+
             # Thông báo số dòng và số cột
             st.write(f"Dữ liệu có {df.shape[0]} dòng và {df.shape[1]} cột.")
         except Exception as e:
@@ -187,8 +187,8 @@ def app():
         # Giao diện theo từng phương pháp
         if selected_method == "Tính xấp xỉ":
             # Chọn tập thuộc tính
-            st.markdown(
-                '<label for="tap-thuoc-tinh">Chọn tập thuộc tính:</label>', unsafe_allow_html=True)
+            # st.markdown(
+            #     '<label for="tap-thuoc-tinh">Chọn tập thuộc tính:</label>', unsafe_allow_html=True)
             selected_attributes = st.multiselect(
                 "Chọn tập thuộc tính", attributes)
 
