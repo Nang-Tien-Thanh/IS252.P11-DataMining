@@ -108,37 +108,22 @@ def app():
     }
 
     /* Nút và các input */
-    /*button {
-        background: linear-gradient(to right, #FFB703, #CD9302, #996E02);
-        color: #023047;
-        width: 313px; 
-        height: 58px;
-        border: none;
-        padding: 10px 15px;
-        font-family: 'Inter', sans-serif;
-        font-weight: 500;
-        font-size: 24px;
-        cursor: pointer;
-        text-align: center;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    }*/
-    
     button {
-                justify-content: center;
-                align-items: center;
-                padding: 9px 42px;
-                font-size: 20px;
-                font-weight: bold;
-                color: #023047;  /* Màu chữ */
-                text-align: center;
-                width: 200px;
-                background: linear-gradient(180deg, #219EBC 0%, #FFB703 100%); /* Nền gradient */
-                border-radius: 10px;
-                border: none; /* Bỏ viền */
-                cursor: pointer; /* Thêm con trỏ chuột kiểu pointer */
-                transition: background 0.3s ease; /* Hiệu ứng chuyển màu nền khi hover */
-                font-size: 16px;
-            }
+        justify-content: center;
+        align-items: center;
+        padding: 9px 42px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #023047;  /* Màu chữ */
+        text-align: center;
+        width: 200px;
+        background: linear-gradient(180deg, #219EBC 0%, #FFB703 100%); /* Nền gradient */
+        border-radius: 10px;
+        border: none; /* Bỏ viền */
+        cursor: pointer; /* Thêm con trỏ chuột kiểu pointer */
+        transition: background 0.3s ease; /* Hiệu ứng chuyển màu nền khi hover */
+        font-size: 16px;
+    }
 
     button:hover {
         background: linear-gradient(to right, #CD9302, #996E02);
@@ -216,7 +201,7 @@ def app():
                 # Nút chạy thuật toán
                 if st.button("Chạy thuật toán"):
                     # Tiền xử lý dữ liệu
-                    transactions = df.groupby('Ma_hoa_don')[
+                    transactions = df.groupby('Ma_hoa_don')[ 
                         'Ma_hang'].apply(list).tolist()
                     te = TransactionEncoder()
                     te_ary = te.fit(transactions).transform(transactions)
@@ -255,13 +240,34 @@ def app():
                             index=False)}</table>", unsafe_allow_html=True)
 
                     elif option == "Phân tích luật kết hợp":
-                        frequent_itemsets = apriori(
-                            df_encoded, min_support=minsupp, use_colnames=True)
-                        rules = association_rules(
-                            frequent_itemsets, metric="lift", min_threshold=mincoff)
-                        st.markdown(
-                            "<div class='result-container'><strong>Kết quả: Luật kết hợp</strong></div>", unsafe_allow_html=True)
-                        st.markdown(f"<table class='dataframe'>{rules.to_html(
-                            index=False)}</table>", unsafe_allow_html=True)
+                        frequent_itemsets = apriori(df_encoded, min_support=minsupp, use_colnames=True)
+                        rules = association_rules(frequent_itemsets, metric="lift", min_threshold=mincoff)
+
+                        # Thêm cột 'Rule' để tạo tên luật (R1, R2, ...)
+                        rules['Rule'] = ['R' + str(i+1) for i in range(len(rules))]
+
+                        # Lọc ra các cột cần hiển thị: Rule, Input (antecedents), và Confidence (CF)
+                        rules_display = rules[['Rule', 'antecedents', 'consequents', 'confidence']]
+
+                        # Chuyển 'frozenset' thành chuỗi không có từ "frozenset"
+                        rules_display['antecedents'] = rules_display['antecedents'].apply(lambda x: ', '.join(list(x)))
+                        rules_display['consequents'] = rules_display['consequents'].apply(lambda x: ', '.join(list(x)))
+
+
+                        # Thực hiện in ra bảng nếu có
+                        if len(rules_display) > 0:
+                            st.markdown(
+                                "<div class='result-container'><strong>Kết quả: Phân tích luật kết hợp</strong></div>", unsafe_allow_html=True)
+                            # Áp dụng font đỏ vào các dòng có Confidence > mincoff
+                            html_table = rules_display.style.applymap(
+                                lambda x: 'font-weight: bold; color: red;', subset=['confidence'])
+
+                            st.markdown(f"<table class='dataframe'>{html_table.to_html()}</table>", unsafe_allow_html=True)
+
+
+                        else:
+                            st.markdown(
+                                "<div class='result-container'><strong>Không có luật kết hợp thỏa mãn!</strong></div>", unsafe_allow_html=True)
+
         except Exception as e:
-            st.error(f"Đã có lỗi xảy ra: {e}")
+            st.write(f"Đã xảy ra lỗi: {str(e)}")

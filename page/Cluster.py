@@ -74,7 +74,7 @@ def app():
         # Nếu file đã được tải lên
         data = pd.read_csv(uploaded_file, sep=';')
         st.success("Dữ liệu đã tải thành công!")
-        
+
     # CSS tùy chỉnh cho bảng Dữ liệu đã tải lên
         custom_data_table_css = """
             <style>
@@ -217,7 +217,8 @@ def app():
                     f'<div class="kmeans-table-container">{data_html}</div>', unsafe_allow_html=True)
 
                 # Hiển thị Vector trọng tâm dưới dạng bảng
-                st.markdown('<h2>Vector trọng tâm:</h2>', unsafe_allow_html=True)
+                st.markdown('<h2>Vector trọng tâm:</h2>',
+                            unsafe_allow_html=True)
 
                 # Chuyển đổi các vector trọng tâm thành DataFrame
                 centroids = kmeans.cluster_centers_  # Vector trọng tâm
@@ -289,7 +290,8 @@ def app():
                             centroid_table_html}</div>', unsafe_allow_html=True)
 
                 # Hiển thị biểu đồ K-means
-                st.markdown('<h2>Biểu đồ K-means:</h2>', unsafe_allow_html=True)
+                st.markdown('<h2>Biểu đồ K-means:</h2>',
+                            unsafe_allow_html=True)
                 plt.figure(figsize=(8, 6))
                 plt.scatter(data.iloc[:, 0], data.iloc[:, 1],
                             c=kmeans.labels_, cmap='viridis')
@@ -312,14 +314,14 @@ def app():
                 "Bán kính vùng lân cận:", min_value=1, step=1, value=2)
 
             if st.button("Thực hiện Kohonen", key="kohonen"):
-            # Chuẩn bị dữ liệu
+                # Chuẩn bị dữ liệu
                 data_values = data.values
                 data_values = (data_values - np.mean(data_values, axis=0)
-                            ) / np.std(data_values, axis=0)
+                               ) / np.std(data_values, axis=0)
 
                 # Huấn luyện Kohonen SOM
                 som = MiniSom(map_width, map_height,
-                            data_values.shape[1], sigma=neighborhood_radius, learning_rate=alpha)
+                              data_values.shape[1], sigma=neighborhood_radius, learning_rate=alpha)
                 som.random_weights_init(data_values)
                 som.train_random(data_values, num_epochs)
 
@@ -395,7 +397,8 @@ def app():
                     f'<div class="kohonen-table-container">{data_html}</div>', unsafe_allow_html=True)
 
                 # Hiển thị Trọng số các nút dưới dạng bảng
-                st.markdown('<h2>Trọng số các nút:</h2>', unsafe_allow_html=True)
+                st.markdown('<h2>Trọng số các nút:</h2>',
+                            unsafe_allow_html=True)
 
                 weights_matrix = som.get_weights()
 
