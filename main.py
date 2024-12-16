@@ -4,7 +4,7 @@ from page import Classification
 from page import Cluster
 from page import Popular
 from page import Reduct
-
+from page import Preprocess
 # Định dạng nền
 st.markdown(
     """
@@ -108,13 +108,12 @@ st.markdown(
 
 )
 
-
 # Tạo sidebar với các lựa chọn
 st.sidebar.title("Chọn tính năng")
 
 # Các lựa chọn trong sidebar
 option = st.sidebar.radio("",
-                          ("None", "Tập phổ biến và luật kết hợp", "Tập thô", "Phân lớp", "Gom cụm"))
+                          ("None", "Tiền xử lý", "Tập phổ biến và luật kết hợp", "Tập thô", "Phân lớp", "Gom cụm"))
 
 # Điều hướng đến trang tương ứng khi người dùng chọn
 if option == "Phân lớp":
@@ -125,3 +124,5 @@ elif option == "Tập phổ biến và luật kết hợp":
     Popular.app()  # Gọi hàm app trong T.py
 elif option == "Tập thô":
     Reduct.app()
+elif option == "Tiền xử lý":
+    Preprocess.app()
