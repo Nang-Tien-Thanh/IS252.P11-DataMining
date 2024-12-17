@@ -258,16 +258,27 @@ def app():
                         if len(rules_display) > 0:
                             st.markdown(
                                 "<div class='result-container'><strong>Kết quả: Phân tích luật kết hợp</strong></div>", unsafe_allow_html=True)
-                            # Áp dụng font đỏ vào các dòng có Confidence > mincoff
-                            html_table = rules_display.style.applymap(
-                                lambda x: 'font-weight: bold; color: red;', subset=['confidence'])
+    
+                        # Áp dụng font đỏ vào các dòng có Confidence >= mincoff
+                        def highlight_confidence(val):
+                            if val >= mincoff:
+                                return 'font-weight: bold; color: red;'  # Áp dụng màu đỏ nếu confidence >= mincoff
+                            return ''  # Không thay đổi gì nếu không thỏa mãn điều kiện
 
-                            st.markdown(f"<table class='dataframe'>{html_table.to_html()}</table>", unsafe_allow_html=True)
+                        # Áp dụng kiểu cho cột 'confidence'
+                        styled_table = rules_display.style.applymap(
+                            highlight_confidence, subset=['confidence']
+                        )
 
+                        # Chuyển thành HTML để hiển thị
+                        html_table = styled_table.to_html(escape=False)
 
-                        else:
-                            st.markdown(
-                                "<div class='result-container'><strong>Không có luật kết hợp thỏa mãn!</strong></div>", unsafe_allow_html=True)
+                        # Hiển thị bảng HTML với các kiểu đã áp dụng
+                        st.markdown(html_table, unsafe_allow_html=True)
+
+                    else:
+                        st.markdown(
+                            "<div class='result-container'><strong>Không có luật kết hợp thỏa mãn!</strong></div>", unsafe_allow_html=True)
 
         except Exception as e:
             st.write(f"Đã xảy ra lỗi: {str(e)}")
