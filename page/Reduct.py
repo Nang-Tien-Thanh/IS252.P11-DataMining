@@ -231,7 +231,7 @@ def app():
                             subset = df[(df[attributes] == attribute_values).all(
                                 axis=1)][decision_column]
                             if (subset == decision_value).all():
-                                lower_indices.append(idx + 1)  # Lưu số thứ tự
+                                lower_indices.append(idx)  # Lưu số thứ tự
                         return len(lower_indices), lower_indices
 
                     # Hàm tính xấp xỉ trên
@@ -242,7 +242,7 @@ def app():
                             subset = df[(df[attributes] == attribute_values).all(
                                 axis=1)][decision_column]
                             if decision_value in subset.values:
-                                upper_indices.append(idx + 1)  # Lưu số thứ tự
+                                upper_indices.append(idx)  # Lưu số thứ tự
                         return len(upper_indices), upper_indices
 
                     # Tính toán xấp xỉ
@@ -311,8 +311,41 @@ def app():
                 # Chỉ lấy các thuộc tính (bỏ cột đầu tiên và cột quyết định)
                 attributes = columns[1:-1]
 
-                # Hàm tìm rút gọn (reduct)
+                # Tạo bản đồ viết tắt cho các thuộc tính
+                attribute_shortcuts = {"Bằng cấp": "B", "Kinh Nghiệm": "K", "Tiếng anh": "T", "Phỏng vấn": "P"}
 
+                # Hiển thị ý nghĩa các ký hiệu viết tắt
+                st.write("**Giải thích ký hiệu ma trận phân biệt:**")
+                for attr, shortcut in attribute_shortcuts.items():
+                    st.write(f"- **{shortcut}**: {attr}")
+
+
+                # Hàm tạo bảng ma trận phân biệt
+                def create_discernibility_matrix(df, attributes, decision_column):
+                    """
+                    Hàm tạo bảng ma trận phân biệt với các thuộc tính viết tắt.
+                    """
+                    matrix = []  # Danh sách các hàng trong ma trận
+                    rows = df.values  # Chuyển dataframe sang mảng numpy
+                    num_objects = len(rows)
+
+                    # Duyệt qua từng cặp hàng
+                    for i in range(num_objects):
+                        row_diff = []
+                        for j in range(num_objects):
+                            if i != j and rows[i][-1] != rows[j][-1]:  # Nếu quyết định khác nhau
+                                diff_set = set()
+                                for attr in attributes:
+                                    if rows[i][df.columns.get_loc(attr)] != rows[j][df.columns.get_loc(attr)]:
+                                        # Thêm ký hiệu viết tắt thay vì tên thuộc tính
+                                        diff_set.add(attribute_shortcuts.get(attr, attr))
+                                row_diff.append(" ".join(sorted(diff_set)))  # Ghép các ký hiệu
+                            else:
+                                row_diff.append("∅")  # Không có thuộc tính phân biệt
+                        matrix.append(row_diff)
+                    return matrix
+
+                # Hàm tìm rút gọn (reduct)
                 def find_reducts(df, decision_column, attributes):
                     reducts = []  # Danh sách các tập rút gọn
 
@@ -357,6 +390,30 @@ def app():
                             rules.append(f"IF {conditions} THEN {
                                          decision_column} = '{decision_label}'")
                     return rules
+                
+                # Hiển thị bảng ma trận phân biệt
+                def display_discernibility_matrix(matrix):
+                    """
+                    Hiển thị bảng ma trận phân biệt dạng bảng.
+                    """
+                    import pandas as pd
+                    st.write("**Bảng ma trận phân biệt:**")
+                    num_rows = len(matrix)
+
+                    # Tạo DataFrame từ ma trận và đánh số thứ tự cột, hàng
+                    matrix_df = pd.DataFrame(
+                        matrix, columns=[f"Đối tượng {i}" for i in range(0, num_rows)],
+                        index=[f"Đối tượng {i}" for i in range(0, num_rows)]
+                    )
+                    st.dataframe(matrix_df)
+
+                # Tạo bảng ma trận phân biệt
+                discernibility_matrix = create_discernibility_matrix(
+                    df, attributes, decision_column
+                )
+
+                # Hiển thị bảng ma trận phân biệt
+                display_discernibility_matrix(discernibility_matrix)
 
                 # Tìm các rút gọn
                 reducts = find_reducts(df, decision_column, attributes)
